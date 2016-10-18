@@ -1,3 +1,5 @@
+raise "Only JRuby is supported" unless RUBY_PLATFORM == "java"
+
 Gem::Specification.new do |s|
 
   s.name            = 'logstash-filter-python'
