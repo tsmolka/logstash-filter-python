@@ -12,6 +12,10 @@ describe LogStash::Filters::Python do
           code => "
             if event.getField('data') == 'A':
               event.setField('data','B')
+            
+            if event.getField('action') == 'parse_json':
+              import json
+              event.setField('data',json.loads(event.getField('data')))
           "
         }
       }
@@ -19,6 +23,14 @@ describe LogStash::Filters::Python do
 
     sample("data"=>"A") do
       insist { subject.get("data") } == "B"
+    end
+    
+    sample("data"=>{"a"=>"b"}) do
+      insist { subject.get("data") } == {"a"=>"b"}
+    end
+    
+    sample("action"=>"parse_json", "data"=>"{\"a\": \"b\"}") do
+      insist { subject.get("data") } == {"a"=>"b"}
     end
   end
 
